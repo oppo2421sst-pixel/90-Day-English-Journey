@@ -1,0 +1,10 @@
+{
+  "name": "90-Day English Journey",
+  "description": "เว็บแอปฝึกคำศัพท์ Oxford 3000 คำใน 90 วัน สำหรับคนเวลาน้อย ลืมง่าย ขี้เบื่อ ด้วยระบบ Spaced Repetition (SRS) และมินิเกม",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

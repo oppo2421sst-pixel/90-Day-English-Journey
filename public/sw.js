@@ -1,31 +1,11 @@
-const CACHE_NAME = 'english-journey-v1';
+const CACHE_NAME = 'english-journey-v2';
 
-// ติดตั้ง Service Worker และบันทึกไฟล์หน้าเว็บลงแคช
+// 1. ติดตั้ง Service Worker
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([
-        '/',
-        '/index.html',
-        '/src/main.tsx',
-        '/src/App.tsx',
-        '/src/index.css'
-      ]);
-    })
-  );
   self.skipWaiting();
 });
 
-// ดึงข้อมูลจากแคชเมื่อไม่มีอินเทอร์เน็ต (Cache-First Strategy)
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => caches.match('/'));
-    })
-  );
-});
-
-// ล้างแคชเวอร์ชันเก่าออกเมื่อมีการอัปเดตระบบ
+// 2. เคลียร์แคชเก่า
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -39,4 +19,37 @@ self.addEventListener('activate', (event) => {
     })
   );
   self.clients.claim();
+});
+
+// 3. ระบบดึงไฟล์จากแคช และบันทึกไฟล์ใหม่ลงเครื่องอัตโนมัติ
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // เก็บเฉพาะคำขอที่สำเร็จลงในแคช
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // ถ้าไม่มีเน็ตและหาไฟล์ไม่เจอ ให้ส่งหน้าหลักกลับไป
+          if (event.request.headers.get('accept')?.includes('text/html')) {
+            return caches.match('/');
+          }
+        });
+    })
+  );
 });

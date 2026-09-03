@@ -69,7 +69,7 @@ import {
   DEFAULT_PROFILE
 } from './utils/storage';
 import { generateDailyQueue, daysBetween, getTodayDateString, calculateLevelMastery } from './utils/srs';
-import { ALL_WORDS } from './data/oxfordDataset';
+import ALL_WORDS from './data/oxford3308Data.json';
 import { 
   GRAMMAR_LESSONS, 
   isLessonUnlocked, 

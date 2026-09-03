@@ -1,16 +1,7 @@
 import { WordItem, CefrLevel } from '../types';
-import { RAW_OXFORD_LIST, THAI_DICTIONARY_MAP } from './rawWordsData';
-import { OXFORD_EXTENDED_A1, OXFORD_EXTENDED_A2, OXFORD_EXTENDED_B1, OXFORD_EXTENDED_B2 } from './oxfordLevels';
+import rawWordsData from './oxford3308Data.json';
 
-export const ALL_WORDS: WordItem[] = [
-  ...OXFORD_EXTENDED_A1,
-  ...OXFORD_EXTENDED_A2,
-  ...OXFORD_EXTENDED_B1,
-  ...OXFORD_EXTENDED_B2,
-].map((item, idx) => ({
-  ...item,
-  id: idx + 1
-}));
+export const ALL_WORDS: WordItem[] = rawWordsData as WordItem[];
 
 export const WORD_MAP: Record<number, WordItem> = {};
 ALL_WORDS.forEach(w => {
